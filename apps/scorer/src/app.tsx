@@ -1,6 +1,9 @@
+import { Button, Box, Input, HStack, Heading, Text, VStack, Card, CardHeader, CardBody, CardFooter } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import PubNub from 'pubnub';
 import { PubNubProvider, usePubNub } from 'pubnub-react';
+
+import './styles/app.css';
 
 const pubnub = new PubNub({
   publishKey: 'pub-c-b14caa5c-c35d-4da7-bed8-3fd3564f11bb',
@@ -8,137 +11,86 @@ const pubnub = new PubNub({
   uuid: 'lijojatis'
 });
 
+
 function App() {
   return (
-    <PubNubProvider client={pubnub}>
-      <Chat />
-    </PubNubProvider>
+    <VStack background="background" height="100%" padding="24px" spacing="24px" width="100%">
+      <VStack spacing="16px" width="100%">
+        <PubNubProvider client={pubnub}>
+          <ScoreCard />
+        </PubNubProvider>
+      </VStack>
+      <Box bottom="5px" left="5px" position="fixed" test-id="appVersion" paddingTop="10px">
+        <Text fontSize="12px">Version: {__APP_VERSION__}</Text>
+      </Box>
+    </VStack>
   );
 }
 
-function Chat() {
+const defaultScore = {
+  eventName: 'My Event',
+  teamOne: {
+    name: 'Team 1',
+    score: '0'
+  },
+  teamTwo: {
+    name: 'Team 2',
+    score: '0'
+  }
+};
+
+function ScoreCard() {
   const pubnub = usePubNub();
   const [channels] = useState<string[]>(['awesome-channel']);
-  const [messages, addMessage] = useState<string[]>([]);
-  const [message, setMessage] = useState<string>('');
+  const [eventName, setEventName] = useState<string>(defaultScore.eventName)
+  const [teamOneName, setTeamOneName] = useState<string>(defaultScore.teamOne.name)
+  const [teamOneScore, setTeamOneScore] = useState<string>(defaultScore.teamOne.score)
+  const [teamTwoName, setTeamTwoName] = useState<string>(defaultScore.teamTwo.name)
+  const [teamTwoScore, setTeamTwoScore] = useState<string>(defaultScore.teamTwo.score)
   
-  const handleMessage = (event: PubNub.MessageEvent) => {
-    const message = event.message;
-    addMessage(messages => [...messages, message.text]);
-  };
-
-  const sendMessage = (message: string) => {
+  const updateScore = (message: string) => {
     if (message) {
+      const score = {
+        eventName: eventName,
+        teamOne: {
+          name: teamOneName,
+          score: teamOneScore
+        },
+        teamTwo: {
+          name: teamTwoName,
+          score: teamTwoScore
+        }
+      };
+      message = JSON.stringify(score);
       pubnub
         .publish({ channel: channels[0], message })
-        .then(() => setMessage(''));
+        .then(() => updateScore(''));
     }
   };
 
-  useEffect(() => {
-    const listenerParams = { message: handleMessage }
-    pubnub.addListener(listenerParams);
-    pubnub.subscribe({ channels });
-    return () => {
-        pubnub.unsubscribe({ channels })
-        pubnub.removeListener(listenerParams)
-    }
-  }, [pubnub, channels]);
-
   return (
-    <div style={pageStyles}>
-      <div style={chatStyles}>
-        <div style={headerStyles}>React Chat Example</div>
-        <div style={listStyles}>
-          {messages.map((message, index) => {
-            return (
-              <div key={`message-${index}`} style={messageStyles}>
-                {message}
-              </div>
-            );
-          })}
-        </div>
-        <div style={footerStyles}>
-          <input
-            type="text"
-            style={inputStyles}
-            placeholder="Type your message"
-            value={message}
-            onKeyPress={e => {
-              if (e.key !== 'Enter') return;
-              sendMessage(message);
-            }}
-            onChange={e => setMessage(e.target.value)}
-          />
-          <button
-            style={buttonStyles}
-            onClick={e => {
-              e.preventDefault();
-              sendMessage(message);
-            }}
-          >
-            Send Message
-          </button>
-        </div>
-      </div>
-    </div>
+    <Card>
+      <CardHeader>
+        <Heading>Sports Cast Score Card</Heading>
+      </CardHeader>
+      <CardBody>
+      <VStack>
+      <Input onChange={e => setEventName(e.target.value)} placeholder='Enter Event Name'/>
+      <HStack>
+        <Input onChange={e => setTeamOneName(e.target.value)} placeholder='Team Name'/>
+        <Input onChange={e => setTeamOneScore(e.target.value)} placeholder='Team Score'/>
+      </HStack>
+      <HStack>
+        <Input onChange={e => setTeamTwoName(e.target.value)} placeholder='Team Name'/>
+        <Input onChange={e => setTeamTwoScore(e.target.value)} placeholder='Team Score'/>
+      </HStack>
+      </VStack>
+      </CardBody>
+      <CardFooter>
+        <Button onClick={e => updateScore('send')}>Submit</Button>
+      </CardFooter>
+    </Card>
   );
 }
-
-const pageStyles = {
-  alignItems: 'center',
-  background: '#282c34',
-  display: 'flex',
-  justifyContent: 'center',
-  minHeight: '100vh',
-};
-
-const chatStyles = {
-  display: 'flex',
-  //flexDirection: 'column',
-  height: '50vh',
-  width: '50%',
-};
-
-const headerStyles = {
-  background: '#323742',
-  color: 'white',
-  fontSize: '1.4rem',
-  padding: '10px 15px',
-};
-
-const listStyles = {
-  alignItems: 'flex-start',
-  backgroundColor: 'white',
-  display: 'flex',
-  //flexDirection: 'column',
-  flexGrow: 1,
-  overflow: 'auto',
-  padding: '10px',
-};
-
-const messageStyles = {
-  backgroundColor: '#eee',
-  borderRadius: '5px',
-  color: '#333',
-  fontSize: '1.1rem',
-  margin: '5px',
-  padding: '8px 15px',
-};
-
-const footerStyles = {
-  display: 'flex',
-};
-
-const inputStyles = {
-  flexGrow: 1,
-  fontSize: '1.1rem',
-  padding: '10px 15px',
-};
-
-const buttonStyles = {
-  fontSize: '1.1rem',
-  padding: '10px 15px',
-};
 
 export default App;
