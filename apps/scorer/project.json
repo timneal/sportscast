@@ -1,0 +1,89 @@
+{
+  "name": "scorer",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/scorer/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nxext/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/scorer",
+        "baseHref": "/",
+        "configFile": "apps/scorer/vite.config.ts"
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/scorer/src/environments/environment.ts",
+              "with": "apps/scorer/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nxext/vite:dev",
+      "options": {
+        "outputPath": "dist/apps/scorer",
+        "baseHref": "/",
+        "configFile": "apps/scorer/vite.config.ts"
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/scorer/src/environments/environment.ts",
+              "with": "apps/scorer/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "preview": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite preview -c apps/scorer/vite.config.ts"
+      },
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/scorer/**/*.{ts,js,tsx,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/scorer/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "parallel": false,
+        "commands": ["yarn nx test-scorer e2e-test --skip-nx-cache --report=./apps/e2e-test/reports/scorer/"]
+      }
+    },
+    "e2e-report": {
+      "executor": "nx:run-commands",
+      "options": {
+        "parallel": false,
+        "commands": ["yarn nx test-report e2e-test --skip-nx-cache --report=./apps/e2e-test/reports/scorer/"]
+      }
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash apps/deploy.sh 'dist/apps/scorer' 'cosmic-dango-2cc8f7'"
+      }
+    }
+  },
+  "tags": []
+}
