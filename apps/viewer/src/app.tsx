@@ -2,7 +2,6 @@ import { Box, Flex, Text, Heading, VStack, HStack } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import ConfettiExplosion, {ConfettiProps} from 'react-confetti-explosion';
 
-import InfoBar from '@millicast-react/info-bar';
 import InfoLabel from '@millicast-react/info-label';
 import useNotification from '@millicast-react/use-notification';
 import usePageClosePrompt from '@millicast-react/use-page-close-prompt';
