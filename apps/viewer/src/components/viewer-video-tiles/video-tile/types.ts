@@ -15,6 +15,7 @@ export interface VideoTileProps {
     volume: number;
   };
   isStreaming?: boolean;
+  isMain?: boolean;
   settings?: SettingsPopoverProps;
   showControlBar?: boolean;
   statistics?: OnStats;

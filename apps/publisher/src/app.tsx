@@ -154,7 +154,7 @@ const App = () => {
       width="100%"
     >
       <VStack spacing="16px" width="100%">
-        <InfoBar isActive={isPublisherStreaming} numViewers={viewerCount} title="Company name" />
+        <InfoBar isActive={isPublisherStreaming} numViewers={viewerCount} title="Sports Cast" />
         {hasMultiStream ? (
           <Flex justifyContent="flex-end" width="100%">
             <InfoLabel
