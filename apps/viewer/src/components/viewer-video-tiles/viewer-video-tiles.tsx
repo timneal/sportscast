@@ -1,5 +1,5 @@
-import { Box, Center, HStack, Grid, Text, Heading } from '@chakra-ui/react';
-import React, { useState, useEffect, useMemo } from 'react';
+import { Box, Center, HStack, Grid } from '@chakra-ui/react';
+import React, { useEffect, useMemo } from 'react';
 
 import { IconProfile } from '@millicast-react/dolbyio-icons';
 import { SimulcastQuality } from '@millicast-react/use-viewer';
