@@ -182,12 +182,12 @@ const Scoreboard = () =>  {
   const pubnub = usePubNub();
   const [channels] = useState<string[]>(['score-channel']);
   const [eventName, setEventName] = useState<string>('')
-  const [maxScore, setMaxScore] = useState<string>('100')
+  const [maxScore, setMaxScore] = useState<string>('')
   const [teamOneName, setTeamOneName] = useState<string>('')
-  const [teamOneScore, setTeamOneScore] = useState<string>('0')
+  const [teamOneScore, setTeamOneScore] = useState<string>('')
   const [teamOneWins, setTeamOneWins] = useState(false);
   const [teamTwoName, setTeamTwoName] = useState<string>('')
-  const [teamTwoScore, setTeamTwoScore] = useState<string>('0 ')
+  const [teamTwoScore, setTeamTwoScore] = useState<string>('')
   const [teamTwoWins, setTeamTwoWins] = useState(false);
 
 
@@ -213,11 +213,25 @@ const Scoreboard = () =>  {
   }, [pubnub, channels]);
 
   useEffect(() => {
-    setTeamOneWins(+teamOneScore >= +maxScore);
-    setTeamTwoWins(+teamTwoScore >= +maxScore);
+    if (teamOneScore !== '')
+      setTeamOneWins(+teamOneScore >= +maxScore);
+    if (teamOneScore !== '')
+      setTeamTwoWins(+teamTwoScore >= +maxScore);
   }, [teamOneScore, teamTwoScore, maxScore]);
 
+  const isPopulated = (() => {
+    return  eventName !== '' || 
+            maxScore !== '' || 
+            teamOneName !== '' ||
+            teamOneScore !== '' ||
+            teamTwoName !== '' ||
+            teamTwoScore !== '';
+  });
+
   return (
+    <>
+    {isPopulated() &&
+
     <HStack
       background="backgroundTranslucent"
       top="0"
@@ -229,20 +243,21 @@ const Scoreboard = () =>  {
       transition="opacity 0.5s"
       width="100%"
     >
-      <Heading test-id="headingName" as="h3" fontSize="16px" fontWeight={600} lineHeight={1.5}>
-        {eventName}
-      </Heading>
+        <Heading test-id="headingName" as="h3" fontSize="18px" fontWeight={600} lineHeight={1.5} backgroundColor={'dolbyPurple.500'} borderRadius={10} padding={2}>
+          {eventName}
+        </Heading>
 
-      <HStack>
-        <Text>{teamOneName}</Text>
-        <Text>{teamOneScore}</Text>
-        {teamOneWins && <ConfettiExplosion {...largeProps} />}
-        <Text>|</Text>
-        <Text>{teamTwoScore}</Text>
-        {teamTwoWins && <ConfettiExplosion {...largeProps} />}
-        <Text>{teamTwoName}</Text>
-      </HStack>
+        <HStack  backgroundColor={'dolbyPurple.500'} borderRadius={10} padding={1}>
+            <Text casing={'uppercase'} color={'white'} padding={2}>{teamOneName}</Text>
+            <Text bg={"white"} borderRadius={10} color={'black'} padding={2} width={10} align={'center'}>{teamOneScore}</Text>
+            {teamOneWins && <ConfettiExplosion {...largeProps} />}
+            <Text bg={"white"} borderRadius={10} color={'black'} padding={2} width={10} align={'center'}>{teamTwoScore}</Text>
+            {teamTwoWins && <ConfettiExplosion {...largeProps} />}
+            <Text casing={'uppercase'} color={'white'} padding={2}>{teamTwoName}</Text>
+        </HStack>
     </HStack>
+  };
+  </>
   );
 }
 

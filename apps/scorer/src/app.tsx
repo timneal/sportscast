@@ -29,11 +29,11 @@ function App() {
 function ScoreCard() {
   const pubnub = usePubNub();
   const [channels] = useState<string[]>(['score-channel']);
-  const [eventName, setEventName] = useState<string>('My Event')
+  const [eventName, setEventName] = useState<string>('Competition Name')
   const [maxScore, setMaxScore] = useState<string>('10')
-  const [teamOneName, setTeamOneName] = useState<string>('Team 1')
+  const [teamOneName, setTeamOneName] = useState<string>('Home')
   const [teamOneScore, setTeamOneScore] = useState<string>('0')
-  const [teamTwoName, setTeamTwoName] = useState<string>('Team 2')
+  const [teamTwoName, setTeamTwoName] = useState<string>('Away')
   const [teamTwoScore, setTeamTwoScore] = useState<string>('0')
   
   useEffect(() => {
